@@ -8,6 +8,7 @@ import serial
 import json
 import datetime
 
+stack = []
 
 def show_error():
     """
@@ -45,42 +46,40 @@ def read_p1_output():
     # Initialize
     # Stack is list for reading P1 output
     p1_counter=0
-    stack=[]
-
+    
     while p1_counter < 26:
         p1_line=''
         #Read 1 line
         try:
             p1_raw = ser.readline()
-        # print (p1_raw)
+            #print (p1_raw)
         except:
             sys.exit ("Seriele poort %s kan niet gelezen worden. Programma afgebroken." % ser.name )
         p1_str=str(p1_raw)
         p1_line=p1_str.strip()
         stack.append(p1_line)
-    #print (p1_line)
-    #print (stack)
-    p1_counter = p1_counter +1
-
-    # try:
-    # ser.close()
+        #print (p1_line)
+        #print (stack)
+        p1_counter = p1_counter +1
+        
+        #try:
+        #    ser.close()
     
-    # except:
-    # sys.exit ("Oops %s. Programma afgebroken." % ser.name )
+        #except:
+        #    sys.exit ("Oops %s. Programma afgebroken." % ser.name )
 
     return stack
 
 def create_json(stack):
 
-    currDatetime = datetime.datetime.now()
+    now = datetime.datetime.now()
+    dt_string = now.strftime("%d-%m-%Y-%H-%M")
 
-    with open('p1_raw_data_{}.json'.format(currDatetime), 'w') as f:
-        print("The json file is created")
 
-    stackJSON = json.dumps(stack, f, indent=4)
-    print(stackJSON)
-
-    return stackJSON
+    with open(fileName, "w") as f:
+      json.dump(stack, f)
+      
+    #return stackJSON
 
 
 def main():
@@ -90,7 +89,8 @@ def main():
     - create JSON file
     """
     read_p1_output()
-    create_json()
+    #print(stack)
+    create_json(stack)
     
 if __name__ == "__main__":
     main()
