@@ -74,6 +74,9 @@ def read_p1_output():
     return stack
 
 def create_json(usage_dict):
+    """
+    This function creates the JSON file based on the usage dictionary created in the process_output_p1 function
+    """
     global fileName
     now = datetime.datetime.now()
     dt_string = now.strftime("%d-%m-%Y-%H-%M")
@@ -85,7 +88,10 @@ def create_json(usage_dict):
     return fileName
 
 def copy_s3(fileName):
-    print (fileName)
+    """
+    This function copies the JSON file created in the create_json function to S3 staging bucket
+    """
+    
     load_dotenv() # this loads the .env file with our credentials
 
     file_name = fileName # name of the file to upload
@@ -104,6 +110,9 @@ def copy_s3(fileName):
 
 
 def process_p1_output(stack):
+    """
+    This function processes the raw output from read_p1_output function into a dictionary
+    """
     stack_teller=0
     #meter=0
     global usage_dict
@@ -150,7 +159,6 @@ def process_p1_output(stack):
     #print (stack, "\n")
     
     data = [off_peak_hours_usage, peak_hours_usage, off_peak_hours_returned, peak_hours_returned, current_power_usage, current_power_returned, gas_usage]
-    #print (data)
     data_key = ["off_peak_hours_kwh", "peak_hours_kwh", "off_peak_hours_returned_kwh", "peak_hours_returned_kwh", "current_power_usage_kwh", "current_power_returned_kwh", "gas_usage_m3"]
     
     usage_dict = dict(zip(data_key, data))
@@ -165,7 +173,9 @@ def main():
     """
     This function invokes the following functions:
     - read P1 output
+    - process P1 raw data
     - create JSON file
+    - copy JSON to S3
     """
     read_p1_output()
     process_p1_output(stack)
