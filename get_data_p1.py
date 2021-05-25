@@ -7,8 +7,12 @@ import sys
 import serial
 import json
 import datetime
+import boto3 
+import os 
+from dotenv import load_dotenv
 
 stack = []
+#fileName = ""
 
 def show_error():
     """
@@ -71,15 +75,30 @@ def read_p1_output():
     return stack
 
 def create_json(stack):
-
+    global fileName
     now = datetime.datetime.now()
     dt_string = now.strftime("%d-%m-%Y-%H-%M")
-
+    fileName = "p1_raw_data_" + dt_string + ".json"
 
     with open(fileName, "w") as f:
       json.dump(stack, f)
       
-    #return stackJSON
+    return fileName
+
+def copy_s3(fileName):
+    print (fileName)
+    load_dotenv() # this loads the .env file with our credentials
+
+    file_name = fileName # name of the file to upload
+    bucket_name = 'p1-staging' # name of the bucket
+
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
+    )
+
+    response = s3_client.upload_file(file_name, bucket_name, file_name)
 
 
 def main():
@@ -89,8 +108,8 @@ def main():
     - create JSON file
     """
     read_p1_output()
-    #print(stack)
     create_json(stack)
+    copy_s3(fileName)
     
 if __name__ == "__main__":
     main()
