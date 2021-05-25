@@ -78,6 +78,7 @@ def create_json(usage_dict):
     This function creates the JSON file based on the usage dictionary created in the process_output_p1 function
     """
     global fileName
+    global dt_string
     now = datetime.datetime.now()
     dt_string = now.strftime("%d-%m-%Y-%H-%M")
     fileName = "p1_raw_data_" + dt_string + ".json"
@@ -158,8 +159,8 @@ def process_p1_output(stack):
     # Debug
     #print (stack, "\n")
     
-    data = [off_peak_hours_usage, peak_hours_usage, off_peak_hours_returned, peak_hours_returned, current_power_usage, current_power_returned, gas_usage]
-    data_key = ["off_peak_hours_kwh", "peak_hours_kwh", "off_peak_hours_returned_kwh", "peak_hours_returned_kwh", "current_power_usage_kwh", "current_power_returned_kwh", "gas_usage_m3"]
+    data = [dt_string, off_peak_hours_usage, peak_hours_usage, off_peak_hours_returned, peak_hours_returned, current_power_usage, current_power_returned, gas_usage]
+    data_key = ["datetime", "off_peak_hours_kwh", "peak_hours_kwh", "off_peak_hours_returned_kwh", "peak_hours_returned_kwh", "current_power_usage_kwh", "current_power_returned_kwh", "gas_usage_m3"]
     
     usage_dict = dict(zip(data_key, data))
 
