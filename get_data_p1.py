@@ -12,7 +12,6 @@ import os
 from dotenv import load_dotenv
 
 stack = []
-#fileName = ""
 
 def show_error():
     """
@@ -74,14 +73,14 @@ def read_p1_output():
 
     return stack
 
-def create_json(stack):
+def create_json(usage_dict):
     global fileName
     now = datetime.datetime.now()
     dt_string = now.strftime("%d-%m-%Y-%H-%M")
     fileName = "p1_raw_data_" + dt_string + ".json"
 
     with open(fileName, "w") as f:
-      json.dump(stack, f)
+      json.dump(usage_dict, f)
       
     return fileName
 
@@ -107,37 +106,42 @@ def copy_s3(fileName):
 def process_p1_output(stack):
     stack_teller=0
     #meter=0
+    global usage_dict
 
     while stack_teller < 26:
         if stack[stack_teller][0:9] == "1-0:1.8.1":
-            off_peak_hours_usage = int(float(stack[stack_teller][10:16]))
+            off_peak_hours_usage = float(stack[stack_teller][10:20])
             off_peak_hours_key = stack[stack_teller][0:9]
-            print ("off_peak_hours:") + stack[stack_teller][10:16]
+            print ("off_peak_hours: ") + stack[stack_teller][10:20]
         elif stack[stack_teller][0:9] == "1-0:1.8.2":      
-            peak_hours_usage = int(float(stack[stack_teller][10:16]))
+            peak_hours_usage = float(stack[stack_teller][10:20])
             peak_hours_key = stack[stack_teller][0:9]
-            print ("peak_hours"), stack[stack_teller][10:16]
-        # # Off peak hours, teruggeleverd vermogen 1-0:2.8.1
-        # elif stack[stack_teller][0:9] == "1-0:2.8.1":
-        #     print "dalterug    ", stack[stack_teller][10:16]
-        #     meter = meter - int(float(stack[stack_teller][10:16]))
-        # #   print "meter totaal   ", meter
-        # # Piek tarief, teruggeleverd vermogen 1-0:2.8.2
-        # elif stack[stack_teller][0:9] == "1-0:2.8.2":
-        #         print "piekterug   ", stack[stack_teller][10:16]
-        #         meter = meter - int(float(stack[stack_teller][10:16]))
-        #         print "meter totaal  ", meter, " (afgenomen/teruggeleverd van het net vanaf 01-11-2017)"
-        # # Huidige stroomafname: 1-0:1.7.0
-        # elif stack[stack_teller][0:9] == "1-0:1.7.0":
-        #         print "Afgenomen vermogen      ", int(float(stack[stack_teller][10:16])), "kW"
-        # # Huidig teruggeleverd vermogen: 1-0:1.7.0
-        # elif stack[stack_teller][0:9] == "1-0:2.7.0":
-        #         print "Teruggeleverd vermogen  ", int(float(stack[stack_teller][10:16])), "kW"
-        # Gasmeter: 0-1:24.2.1
+            print ("peak_hours: ") + stack[stack_teller][10:20]
+        # Off peak hours, teruggeleverd vermogen 1-0:2.8.1
+        elif stack[stack_teller][0:9] == "1-0:2.8.1":
+            off_peak_hours_returned = float(stack[stack_teller][10:20])
+            off_peak_hours_returned_key = stack[stack_teller][0:9]
+            print ("off_peak_hours_returned: ") + stack[stack_teller][10:20]
+        ## Peak hours, teruggeleverd vermogen 1-0:2.8.2
+        elif stack[stack_teller][0:9] == "1-0:2.8.2":
+            peak_hours_returned = float(stack[stack_teller][10:20])
+            peak_hours_returned_key = stack[stack_teller][0:9]
+            print ("peak_hours_returned: ") + stack[stack_teller][10:20]
+        ## Current power usage: 1-0:1.7.0
+        elif stack[stack_teller][0:9] == "1-0:1.7.0":
+            current_power_usage = float(stack[stack_teller][10:16])
+            current_power_usage_key = stack[stack_teller][0:9]
+            print ("current_power_usage: ") + stack[stack_teller][10:16]
+        ## Current power returned: 1-0:1.7.0
+        elif stack[stack_teller][0:9] == "1-0:2.7.0":
+            current_power_returned = float(stack[stack_teller][10:16])
+            current_power_usage_returned_key = stack[stack_teller][0:9]
+            print ("current_power_usage_returned: ") + stack[stack_teller][10:16]
+        # Gas meterage: 0-1:24.2.1
         elif stack[stack_teller][0:10] == "0-1:24.2.1":
-                gas_usage = int(float(stack[stack_teller][26:35]))
+                gas_usage = float(stack[stack_teller][26:35])
                 gas_usage_key = stack[stack_teller][0:10]
-                print ("gas_usage"), int(float(stack[stack_teller][26:35])), "m3"
+                print ("gas_usage: ") + stack[stack_teller][26:35]
         else:
             pass
         stack_teller = stack_teller +1
@@ -145,17 +149,16 @@ def process_p1_output(stack):
     # Debug
     #print (stack, "\n")
     
-    data = off_peak_hours_usage + peak_hours_usage + gas_usage
-    data_key = off_peak_hours_key + peak_hours_key + gas_usage_key
+    data = [off_peak_hours_usage, peak_hours_usage, off_peak_hours_returned, peak_hours_returned, current_power_usage, current_power_returned, gas_usage]
+    #print (data)
+    data_key = ["off_peak_hours_kwh", "peak_hours_kwh", "off_peak_hours_returned_kwh", "peak_hours_returned_kwh", "current_power_usage_kwh", "current_power_returned_kwh", "gas_usage_m3"]
     
     usage_dict = dict(zip(data_key, data))
 
     print(usage_dict)
 
     #Close port and show status
-    return 
-
-
+    return usage_dict 
 
 
 def main():
@@ -166,8 +169,8 @@ def main():
     """
     read_p1_output()
     process_p1_output(stack)
-    #create_json(stack)
-    #copy_s3(fileName)
+    create_json(usage_dict)
+    copy_s3(fileName)
     
 if __name__ == "__main__":
     main()
