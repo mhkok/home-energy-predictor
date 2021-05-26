@@ -1,68 +1,50 @@
-module "s3_bucket" {
-  source = "terraform-aws-modules/s3-bucket/aws"
+module "sg" {
+  source  = "terraform-aws-modules/security-group/aws//modules/redshift"
+  version = "~> 3.0"
 
-  bucket        = "p1-staging"
-  acl           = "private"
-  force_destroy = true
+  name   = "dwh-redshift"
+  vpc_id = "vpc-d0f07fb4" #US-EAST-1 "" vpc-ee4d368a
 
-  attach_policy = true
-  policy        = data.aws_iam_policy_document.bucket_policy_p1_staging.json
+  # Allow ingress rules to be accessed only within current VPC
+  ingress_cidr_blocks = var.ingress_cidr_blocks
 
-  attach_deny_insecure_transport_policy = true
-
-  tags = {
-    Owner = "MK"
-  }
+  # Allow all rules for all protocols
+  egress_rules = ["all-all"]
 }
 
-module "s3_bucket_knmi_weather_data" {
-  source = "terraform-aws-modules/s3-bucket/aws"
+module "redshift" {
+  source  = "terraform-aws-modules/redshift/aws"
+  version = "~> 3.0"
 
-  bucket        = "weather-data-staging"
-  acl           = "private"
-  force_destroy = true
+  cluster_identifier      = "dwh-cluster"
+  cluster_node_type       = "dc2.large"
+  cluster_number_of_nodes = 1
 
-  attach_policy = true
-  policy        = data.aws_iam_policy_document.bucket_policy_weather_data.json
+  cluster_database_name   = "dwh"
+  cluster_master_username = var.cluster_master_username
+  cluster_master_password = var.cluster_master_password
 
-  attach_deny_insecure_transport_policy = true
+  final_snapshot_identifier = false
 
-  tags = {
-    Owner = "MK"
-  }
+  publicly_accessible = true
+
+  # Group parameters
+  wlm_json_configuration = "[{\"query_concurrency\": 5}]"
+
+  # DB Subnet Group Inputs
+  subnets = ["subnet-22a1097a", "subnet-fc43d88a", "subnet-a6412fc2" ] # US-EAST-1 #"subnet-b54d659d", "subnet-e35f3787", "subnet-2a43c05c"
+  vpc_security_group_ids = [module.sg.this_security_group_id]
+
+  # IAM Roles
+  cluster_iam_roles = [aws_iam_role.redshift-iam-role.arn]
 }
 
-data "aws_iam_policy_document" "bucket_policy_p1_staging" {
-  statement {
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::315911064428:user/s3-upload-role"]
-    }
-
-    actions = [
-      "s3:putObject",
-    ]
-
-    resources = [
-      "arn:aws:s3:::p1-staging/*",
-    ]
-  }
-}
-
-
-data "aws_iam_policy_document" "bucket_policy_weather_data" {
-  statement {
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::315911064428:user/s3-upload-role"]
-    }
-
-    actions = [
-      "s3:putObject",
-    ]
-
-    resources = [
-      "arn:aws:s3:::weather-data-staging/*",
-    ]
-  }
-}
+# module "airflow" {
+#   source  = "PowerDataHub/airflow/aws"
+#   version = "0.13.0"
+#   cluster_name = "airflow-dev"
+#   key_name = "mhkok.aws.personal"
+#   db_password = "test"
+#   fernet_key = "test"
+#   # insert the 9 required variables here
+# }
