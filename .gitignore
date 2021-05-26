@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# vscode settings
+.vscode
+
+# terraform
+*.tfstate
+*.tfstate.backup
+.terraform
