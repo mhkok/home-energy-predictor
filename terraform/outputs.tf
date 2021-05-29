@@ -17,3 +17,8 @@ output "redshift_iam_role_arn" {
     description = "IAM role for redshift"
     value       = aws_iam_role.redshift-iam-role.arn
 }
+
+output "public_dns" {
+  description = "List of public DNS names assigned to the instances"
+  value       = module.ec2_instance_airflow.public_dns
+}
