@@ -91,10 +91,9 @@ sudo passwd -d airflow
 sudo service docker start
 sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
-su - airflow -c "echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env"
-docker-compose version
+su - airflow -c "echo -e 'AIRFLOW_UID=50000\nAIRFLOW_GID=0' > .env"
 su - airflow -c "curl -L https://raw.githubusercontent.com/mhkok/home-energy-predictor/main/terraform/docker-compose.yaml -o docker-compose.yaml"
 su - airflow -c "docker-compose up airflow-init"
-docker-compose up
+su - airflow -c "docker-compose up"
 EOF
 }
