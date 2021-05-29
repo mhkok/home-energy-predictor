@@ -41,7 +41,6 @@ staging_power_usage_create = (
 power_usage_home_create = (
     """
     CREATE TABLE IF NOT EXISTS power_usage_home (
-        id INT IDENTITY(0,1),
         datetime timestamp NOT NULL,
         current_power_usage float,
         peak_hours float,
@@ -50,9 +49,6 @@ power_usage_home_create = (
         off_peak_returned float,
         current_power_returned,
         CONSTRAINT power_usage_date_id_pkey PRIMARY KEY (power_usage_date_id)
-        FOREIGN KEY (datetime) REFERENCES datetime (time),
-        FOREIGN KEY (datetime) REFERENCES weather_date_id (weather),
-        FOREIGN KEY (datetime) REFERENCES elec_prices_date_id (electricity_prices),
     );
     """
 )
@@ -93,6 +89,22 @@ electricity_prices_create = (
         year int4,
         CONSTRAINT elec_prices_date_id_pkey PRIMARY KEY (elec_prices_date_id)
     );
+    """
+)
+
+home_electricity_costs = (
+    """
+    CREATE TABLE IF NOT EXISTS home_electricity_costs (
+        id INT IDENTITY(0,1),
+        month month,
+        year year,
+        electricity costs per month float,
+        weather float,
+        FOREIGN KEY (date) REFERENCES power_usage_date_id (power_usage_home)
+        FOREIGN KEY (date) REFERENCES datetime (time),
+        FOREIGN KEY (date) REFERENCES weather_date_id (weather),
+        FOREIGN KEY (date) REFERENCES elec_prices_date_id (electricity_prices),
+    )
     """
 )
 
