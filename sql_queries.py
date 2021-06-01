@@ -14,6 +14,8 @@ electricity_prices_drop         = "DROP TABLE IF EXISTS electricity_prices"
 staging_power_usage_drop        = "DROP TABLE IF EXISTS staging_power_usage"
 
 # CREATE TABLES
+
+## STAGING TABLES
 staging_power_usage_copy = (
     """
     COPY staging_power_usage from 's3://p1-staging/'
@@ -38,15 +40,31 @@ staging_power_usage_create = (
     """
 )
 
+staging_electricity_prices = (
+    """
+    CREATE TABLE staging_electricity_prices (
+        index int, 
+        elec_prices_date_id date NOT NULL,
+        costperkwh varchar,
+        month varchar(256),
+        year int4
+    );
+    """
+)
+
+## DIMENSION TABLES
 power_usage_home_create = (
     """
     CREATE TABLE IF NOT EXISTS power_usage_home (
-        power_usage_date_id timestamp NOT NULL,
+        power_usage_date_id bigint NOT NULL,
+        datetime timestamp,
+        month int,
+        year int,
         current_power_usage float,
         peak_hours float,
         peak_hours_returned float,
         off_peak_hours float,
-        off_peak_returned float,
+        off_peak_hours_returned float,
         current_power_returned float,
         CONSTRAINT power_usage_date_id_pkey PRIMARY KEY (power_usage_date_id)
     );
@@ -83,7 +101,7 @@ weather_table_create = (
 electricity_prices_create = (
     """
     CREATE TABLE electricity_prices (
-        elec_prices_date_id timestamp NOT NULL,
+        elec_prices_date_id int NOT NULL,
         costperkwh float,
         month varchar(256),
         year int4,
@@ -92,40 +110,64 @@ electricity_prices_create = (
     """
 )
 
+## FACT TABLE
 home_electricity_costs = (
     """
     CREATE TABLE IF NOT EXISTS home_electricity_costs (
         id INT IDENTITY(0,1),
-        date date,
         month VARCHAR,
         year INT4,
         electricity_costs_per_month FLOAT,
-        weather FLOAT,
-        FOREIGN KEY (date) REFERENCES power_usage_home (power_usage_date_id),
-        FOREIGN KEY (date) REFERENCES time (datetime),
-        FOREIGN KEY (date) REFERENCES weather (weather_date_id),
-        FOREIGN KEY (date) REFERENCES electricity_prices (elec_prices_date_id)
+        power_usage_date_id bigint,
+        elec_prices_date_id bigint,
+        FOREIGN KEY (power_usage_date_id) REFERENCES power_usage_home (power_usage_date_id),
+        FOREIGN KEY (elec_prices_date_id) REFERENCES electricity_prices (elec_prices_date_id)
     )
     """
 )
 
-# songplay_table_insert = (
-#     """
-#    INSERT INTO songplay (start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
-#    SELECT DISTINCT  se.ts,
-#                     se.userid,
-#                     se.level,
-#                     ss.song_id,
-#                     ss.artist_id,
-#                     se.sessionid,
-#                     se.location,
-#                     se.useragent
-#     FROM staging_events se 
-#     LEFT JOIN staging_songs ss ON (se.artist = ss.artist_name) 
-#     AND (se.length = ss.duration)
-#     WHERE se.page = 'NextSong' AND artist_id IS NOT NULL;
-#     """
-# )
+### INSERT SQL STATEMENTS 
+power_usage_home_insert = (
+    """
+    INSERT INTO power_usage_home (power_usage_date_id, datetime, month, year, current_power_usage, peak_hours, peak_hours_returned, off_peak_hours, off_peak_hours_returned, current_power_returned)
+                SELECT DISTINCT CAST (regexp_replace(spu.datetime, '[-]')AS BIGINT) AS power_usage_date_id,
+                    to_timestamp(spu.datetime, 'DD-MM-YYYY-HH24-MI') AS datetime, 
+                    EXTRACT (MONTH FROM (to_timestamp(spu.datetime, 'DD-MM-YYYY-HH24-MI'))) as month,
+                    EXTRACT (YEAR FROM (to_timestamp(spu.datetime, 'DD-MM-YYYY-HH24-MI'))) as year,                          
+                    spu.current_power_usage_kwh,
+                    spu.peak_hours_kwh,
+                    spu.peak_hours_returned_kwh,
+                    spu.off_peak_hours_kwh,
+                    spu.off_peak_hours_returned_kwh,
+                    spu.current_power_returned_kwh
+    FROM staging_power_usage spu
+    WHERE spu.datetime IS NOT NULL
+    """
+)
+
+electricity_prices_insert = (
+    """
+    INSERT INTO electricity_prices (elec_prices_date_id, costperkwh, month, year)
+    SELECT DISTINCT CAST (regexp_replace(sep.elec_prices_date_id, '[-]')AS BIGINT) AS elec_prices_date_id,
+                    CAST (sep.costperkwh AS float) AS costperkwh,
+                    EXTRACT (MONTH FROM sep.elec_prices_date_id) AS month,
+                    EXTRACT (YEAR FROM sep.elec_prices_date_id) AS year
+    FROM staging_electricity_prices sep
+    """
+)
+
+home_electricity_costs_table_insert = (
+    """
+    INSERT INTO home_electricity_costs (month, year, electricity_costs_per_month)
+    SELECT DISTINCT puh.month AS month,
+    	   			puh.year AS year,
+           			SUM(puh.current_power_usage) * ep.costperkwh AS electricity_costs_per_month 
+    FROM power_usage_home puh
+    JOIN electricity_prices ep ON (puh.month = ep.month)
+    AND (ep.year = puh.year)
+	GROUP BY puh.month, puh.year, ep.costperkwh
+    """
+)
 
 # QUERY LISTS
 
