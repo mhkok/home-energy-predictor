@@ -7,13 +7,13 @@ config.read('dwh.cfg')
 
 # DROP TABLES
 
-power_usage_home_drop           = "DROP TABLE IF EXISTS power_usage_home"
+power_usage_home_drop           = "DROP TABLE IF EXISTS power_usage_home CASCADE"
 time_table_drop                 = "DROP TABLE IF EXISTS time"
 weather_table_drop              = "DROP TABLE IF EXISTS weather"
-electricity_prices_drop         = "DROP TABLE IF EXISTS electricity_prices"
+electricity_prices_drop         = "DROP TABLE IF EXISTS electricity_prices CASCADE"
 home_electricity_costs_drop     = "DROP TABLE IF EXISTS home_electricity_costs"
 staging_power_usage_drop        = "DROP TABLE IF EXISTS staging_power_usage"
-staging_electricity_prices_drop      = "DROP TABLE IF EXISTS staging_electricity_prices"
+staging_electricity_prices_drop = "DROP TABLE IF EXISTS staging_electricity_prices"
 
 
 

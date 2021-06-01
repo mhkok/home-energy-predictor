@@ -60,8 +60,8 @@ def main():
     cur = conn.cursor()
     db = create_engine(conn_string)
 
-    #load_staging_power_usage_copy(cur, conn)
-    #load_staging_process_electricity_costs(db)
+    load_staging_power_usage_copy(cur, conn)
+    load_staging_process_electricity_costs(db)
     insert_tables(cur, conn)
     
     
