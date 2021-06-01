@@ -5,11 +5,23 @@ This project retrieves data from your smart meter and pushes into dwh for analys
 
 
 ## Architecture
-The architecture of the Home Energy Predictor consists of a myriad of technologies. Streaming data is being collected from your Raspberry Pi through a P1 cable into the cloud (S3 blob storage). On a daily basis an Airflow data pipeline is run to push the data into AWS Redshift. 
+The architecture of the Home Energy Predictor consists of a myriad of technologies. Streaming data is being collected from your Raspberry Pi through a P1 cable into the cloud (S3 blob storage). On a daily basis an Airflow data pipeline is run to push the data into AWS Redshift (future release). 
 
 ![Architecture Home Energy Predictor](./architecture.png)
 
+## Choice of technology
+For data storage I have chosen to use S3 since this is extremely scalable, cheap and quite easy to integrate with a myriad of cloud native technologies out there. 
+
+As for database technology I have chose to use AWS Redshift since this is heavily based on SQL technology, which is again highly scalable and is commonly used by many. This allows for easy transfer of knowledge and is easy understandable by other colleagues in the data engineering world.
+
+As for languages  I have used a combination of SQL, Python and Pandas to be able to extract, transfer and load the data into the Redshift DWH. These are all languages and tools heavily used by the community and are easy understandable. Hence, my decision to use these tools. 
+
+## Different scenarios
+- Data increased by 100x: Due to the scalable of the tools used above this should not be an issue for the Energy Predictor tool.
+- Pipelines each day at 7am: By implementing a DAG using Airflow its quite easy to run the ETL processes daily on 7am. 
+- Database accessed by 100+ users: The DWH Redshift database can handle up to 500 concurrent connections. Also, most likely when there are more users connected to the Redshift database the hardware specs of the Redshift database will need to be increased to handle the load. 
 ## Data types & files
+
 Currently two different data types are used in this projecct to process data: JSON & CSV. Find under the `/data` dir examples of these files. 
 - Electricity Costs data (CSV): This data is coming from the Dutch statistics bureau. This data is used to calculate how much the usage of electricity will cost based on kWh per month
 - Power usage costs (JSON): This data is coming directly from your (compatible) smart meter in your home using a P1 cable connected to a Raspberry Pi. This JSON is an example of how this looks like. Typically the following the data is tracked in the JSON:
