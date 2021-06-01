@@ -11,11 +11,13 @@ power_usage_home_drop           = "DROP TABLE IF EXISTS power_usage_home"
 time_table_drop                 = "DROP TABLE IF EXISTS time"
 weather_table_drop              = "DROP TABLE IF EXISTS weather"
 electricity_prices_drop         = "DROP TABLE IF EXISTS electricity_prices"
+home_electricity_costs_drop     = "DROP TABLE IF EXISTS home_electricity_costs"
 staging_power_usage_drop        = "DROP TABLE IF EXISTS staging_power_usage"
+staging_electricity_prices_drop      = "DROP TABLE IF EXISTS staging_electricity_prices"
 
-# CREATE TABLES
 
-## STAGING TABLES
+
+## COPY
 staging_power_usage_copy = (
     """
     COPY staging_power_usage from 's3://p1-staging/'
@@ -24,6 +26,8 @@ staging_power_usage_copy = (
     JSON 'auto';
     """
     ).format(config.get('IAM_ROLE', 'ARN'))
+
+# CREATE TABLES
 
 staging_power_usage_create = (
     """
@@ -171,7 +175,7 @@ home_electricity_costs_table_insert = (
 
 # QUERY LISTS
 
-#create_table_queries = [staging_events_table_create, staging_songs_table_create, user_table_create, song_table_create, artist_table_create, time_table_create, songplay_table_create]
-#drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
-#copy_table_queries = [staging_events_copy, staging_songs_copy]
-#insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
+create_table_queries = [staging_power_usage_create, staging_electricity_prices, power_usage_home_create, weather_table_create, electricity_prices_create, time_table_create, home_electricity_costs]
+drop_table_queries = [power_usage_home_drop, time_table_drop, weather_table_drop, electricity_prices_drop, home_electricity_costs_drop, staging_power_usage_drop, staging_electricity_prices_drop, time_table_drop]
+copy_table_queries = [staging_power_usage_copy]
+insert_table_queries = [electricity_prices_insert, home_electricity_costs_table_insert]
