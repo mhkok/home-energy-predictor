@@ -48,7 +48,7 @@ In this section the schema's for the database are explained. The data schema is 
 | electricity_costs_per_month | FLOAT8 | 17 / 17 | N/A | This is the calculation of the cost per month of electricity based on table `power_usage_home` & `Electricity prices`. |
 | power_usage_date_id | INT8 | 19 / 19 | FOREIGN KEY | FOREIGN KEY to `power_usage_home` table with primary key `power_usage_date_id` |
 | elec_prices_date_id | INT8 | 19 / 19 | FOREIGN KEY | FOREIGN KEY to `electricity_prices` table with primary key `elec_prices_date_id` |
-| date | 
+| date | TIMESTAMP | 29 /29 | FOREIGN KEY | FOREIGN KEY to `time` table with primary key `datetime` |
 
 
 `Dim_Power_Usage`: This is a dimension table consisting of all electricity usage coming from your P1/Smartmeter data deployed on 
@@ -90,6 +90,7 @@ Raspbery Pi. This table has the following schema:
 
 `Dim_Time`: This is a dimesion table that has timestamps of power usage broken down into specific units
 - `date`, `datetime`, `week`, `hour`, `year`, `day of week`, `month`
+
 | Field Name | Datatype | Field Length / Precision | Constraint | Description |
 | --------------- | --------------- | --------------- | -------- | --------- |
 | date | TIMESTMAP | 29 / 29 | NOT NULL / PRIMARY KEY | This is the unique timestamp for each row in the table |
