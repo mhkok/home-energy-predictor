@@ -46,8 +46,8 @@ In this section the schema's for the database are explained. The data schema is 
 | elec_prices_date_id | INT IDENTITY | 10 / 10 | N/A | This is the field that uniquely identifies the value of the row |
 | month | VARCHAR | 256 / 256 | N/A | This column shows the the month |
 | electricity_costs_per_month | FLOAT8 | 17 / 17 | N/A | This is the calculation of the cost per month of electricity based on table `power_usage_home` & `Electricity prices`. |
-| power_usage_date_id | INT8 | 19 / 19 | FOREIGN KEY to `power_usage_home` table with primary key `power_usage_date_id` |
-| elec_prices_date_id | INT8 | 19 / 19 | FOREIGN KEY to `electricity_prices` table with primary key `elec_prices_date_id` |
+| power_usage_date_id | INT8 | 19 / 19 | N/A | FOREIGN KEY to `power_usage_home` table with primary key `power_usage_date_id` |
+| elec_prices_date_id | INT8 | 19 / 19 | N/A | FOREIGN KEY to `electricity_prices` table with primary key `elec_prices_date_id` |
 
 
 
