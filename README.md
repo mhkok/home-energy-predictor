@@ -69,6 +69,7 @@ Raspbery Pi. This table has the following schema:
 
 `Dim_Electricity_prices`: This is a dimension table that has the latest electricity prices available from the Dutch statistics bureau (CBS) with the following schema:
 - `elec_prices_date_id`, `costperkwh`, `month`, `year`
+
 | Field Name | Datatype | Field Length / Precision | Constraint | Description |
 | --------------- | --------------- | --------------- | -------- | --------- |
 | elec_prices_date_id | INT4 | 10 / 10 | NOT NULL | This is the unique ID for each of the rows in the table |
