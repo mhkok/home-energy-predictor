@@ -48,6 +48,7 @@ In this section the schema's for the database are explained. The data schema is 
 | electricity_costs_per_month | FLOAT8 | 17 / 17 | N/A | This is the calculation of the cost per month of electricity based on table `power_usage_home` & `Electricity prices`. |
 | power_usage_date_id | INT8 | 19 / 19 | FOREIGN KEY | FOREIGN KEY to `power_usage_home` table with primary key `power_usage_date_id` |
 | elec_prices_date_id | INT8 | 19 / 19 | FOREIGN KEY | FOREIGN KEY to `electricity_prices` table with primary key `elec_prices_date_id` |
+| date | 
 
 
 `Dim_Power_Usage`: This is a dimension table consisting of all electricity usage coming from your P1/Smartmeter data deployed on 
@@ -56,7 +57,7 @@ Raspbery Pi. This table has the following schema:
 
 | Field Name | Datatype | Field Length / Precision | Constraint | Description |
 | --------------- | --------------- | --------------- | -------- | --------- |
-| power_usage_date_id | INT8 | 19 / 19 | NOT NULL | This is the unique ID for each of the rows in the table |
+| power_usage_date_id | INT8 | 19 / 19 | NOT NULL PRIMARY KEY | This is the unique ID for each of the rows in the table |
 | datetime | TIMESTAMP | 29 / 29 | N/A | This is the timestamp of the measure power usage in the house | 
 | month | INT4 | 10 / 10 | N/A | This is the month of the power measurement in the house | 
 | year |  INT4 | 10 / 10 | N/A | This is the year of the power measurement in the house | 
@@ -72,7 +73,7 @@ Raspbery Pi. This table has the following schema:
 
 | Field Name | Datatype | Field Length / Precision | Constraint | Description |
 | --------------- | --------------- | --------------- | -------- | --------- |
-| elec_prices_date_id | INT4 | 10 / 10 | NOT NULL | This is the unique ID for each of the rows in the table |
+| elec_prices_date_id | INT4 | 10 / 10 | NOT NULL PRIMARY KEY | This is the unique ID for each of the rows in the table |
 | costperkwh | FLOAT8 | 10 / 10 | N/A | This is the cost per kwh in EUR |
 | month | VARCHAR | 10 / 10 | N/A | This is the month for the cost per kwh |
 | year | INT4 | 10 / 10 | N/A | This is year for the cost per kwh |
@@ -82,12 +83,22 @@ Raspbery Pi. This table has the following schema:
 
 | Field Name | Datatype | Field Length / Precision | Constraint | Description |
 | --------------- | --------------- | --------------- | -------- | --------- |
-| weather_date_id | INT4 | 10 / 10 | NOT NULL | This is the unique ID for each of the rows in the table |
-| temperature | FLOAT8 | 10 / 10 | NOT NULL | This is the temperature in CELCIUS degrees |
-| month | VARCHAR | 10 / 10 | NOT NULL | This is the month for temperature degrees |
-| year | INT4 | 10 / 10 | NOT NULL | This is the year for temperature degrees |
+| weather_date_id | INT4 | 10 / 10 | NOT NULL PRIMARY KEY | This is the unique ID for each of the rows in the table |
+| temperature | FLOAT8 | 10 / 10 | N/A | This is the temperature in CELCIUS degrees |
+| month | VARCHAR | 10 / 10 | N/A | This is the month for temperature degrees |
+| year | INT4 | 10 / 10 | N/A | This is the year for temperature degrees |
 
 `Dim_Time`: This is a dimesion table that has timestamps of power usage broken down into specific units
 - `date`, `datetime`, `week`, `hour`, `year`, `day of week`, `month`
+| Field Name | Datatype | Field Length / Precision | Constraint | Description |
+| --------------- | --------------- | --------------- | -------- | --------- |
+| date | TIMESTMAP | 29 / 29 | NOT NULL / PRIMARY KEY | This is the unique timestamp for each row in the table |
+| hour | INT4 | 10 /10 | N/A | This is the hour of the power usage dimension table |
+| day | INT4 | 10 /10 | N/A | This is the day of the power usage dimension table | 
+| week | INT4 | 10 /10 | N/A | This is the week of the power usage dimension table | 
+| month | VARCHAR | 256 / 256 | N/A | This is the month of the power usage dimension table |
+| year | INT4 | 10 /10 | N/A | This is the year of the power usage dimension table |
+| weekday | VARCHAR | 256 / 256 | N/A | This is the day of the week of the power usage dimension table |
+
 
 ![Schema for DWH](./schema.png)
