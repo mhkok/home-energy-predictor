@@ -34,10 +34,13 @@ The following files are in this repo:
 - `p1_data_p1.py`: This file is run every 5 mins on a Raspberry Pi connected to the Smartmeter. The python file reads the output of the data and translates this into a JSON file. Finally, the JSON is copied across into S3.
 - `terraform/*`: this directory contains all the IaC to provision Airflow & AWS Redshift. Make sure to have installed `terraform 0.13` to properly run this code. To provision infrastructure run the following commands: `terraform init`, `terraform plan` and `terraform apply`.
 
-## Schema and data model for DWH
+## Schema, Data Dictionary and Datamodel for DWH
 
 In this section the schema's for the database are explained. The data schema is based on a Star schema, using a physical model. Generally speaking a Star schema has several dimension tables and a fact table. The star schema consists of one or more fact tables referencing any number of dimension tables. The benefits are that the tables are denormalized, queries are simplified and aggregations will go faster. Drawbacks of the star schema model is decreased query flexbility and many to many relationships. This could negatively impact the performance of the database. 
 
+I have chose the star schema built on top of Redshift DWH to ensure maintainability and scalability. The type of data used fits nicely for this purpose. The data can be sliced into dimesion tables (eg power usage, electricity prices) and one fact table to view the costs of electricity.
+
+### Data Dictionary
 `Fact_Home_Electricity_Costs`: This is the fact table that shows the costs per month for your live electricity usage. This table has the following schema:
 - `elec_prices_date_id`, `electricity_costs_per_month	`, `month`, `year`
 
@@ -101,5 +104,5 @@ Raspbery Pi. This table has the following schema:
 | year | INT4 | 10 /10 | N/A | This is the year of the power usage dimension table |
 | weekday | VARCHAR | 256 / 256 | N/A | This is the day of the week of the power usage dimension table |
 
-
+### Data model for DWH
 ![Schema for DWH](./schema.png)
