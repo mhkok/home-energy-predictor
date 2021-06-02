@@ -43,14 +43,12 @@ In this section the schema's for the database are explained. The data schema is 
 
 | Field Name | Datatype | Field Length / Precision | Constraint | Description |
 | --------------- | --------------- | --------------- | -------- | --------- |
-| Row 1 Column 1 | Row 1 Column 2 | Row 1 Column 3 |
+| elec_prices_date_id | INT IDENTITY | 10 / 10 | N/A | This is the field that uniquely identifies the value of the row |
 | Row 2 Column 1 | Row 2 Column 2 | Row 2 Column 3 |
 | Row 3 Column 1 | Row 3 Column 2 | Row 3 Column 3 |
 
 
-|Field Name |Datatype |Field Length / Precision |Constraint | Description|
-|:--- | :---: | ---:|
-| elec_prices_date_id | INT IDENTITY | 10 / 10 | N/A | This is the field that uniquely identifies the value of the row |
+| elec_prices_date_id |  |  |  | 
 | month | VARCHAR | 256 / 256 | N/A | This column shows the the month |
 | electricity_costs_per_month	 | FLOAT8 |17 / 17 | N/A | This is the calculation of the cost per month of electricity based on table `power_usage_home` & `Electricity prices`. |
 | power_usage_date_id | FLOAT8 | 19 / 19 | FOREIGN KEY to `power_usage_home` table |
