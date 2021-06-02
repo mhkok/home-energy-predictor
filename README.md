@@ -34,7 +34,7 @@ The following files are in this repo:
 - `p1_data_p1.py`: This file is run every 5 mins on a Raspberry Pi connected to the Smartmeter. The python file reads the output of the data and translates this into a JSON file. Finally, the JSON is copied across into S3.
 - `terraform/*`: this directory contains all the IaC to provision Airflow & AWS Redshift. Make sure to have installed `terraform 0.13` to properly run this code. To provision infrastructure run the following commands: `terraform init`, `terraform plan` and `terraform apply`.
 
-## Schema and data modelfor DWH
+## Schema and data model for DWH
 
 In this section the schema's for the database are explained. The data schema is based on a Star schema, using a physical model. Generally speaking a Star schema has several dimension tables and a fact table. The star schema consists of one or more fact tables referencing any number of dimension tables. The benefits are that the tables are denormalized, queries are simplified and aggregations will go faster. Drawbacks of the star schema model is decreased query flexbility and many to many relationships. This could negatively impact the performance of the database. 
 
@@ -79,6 +79,13 @@ Raspbery Pi. This table has the following schema:
 
 `Dim_Weather`: This is a dimension table that has all the weather data from the last 100 years in the Netherlands (popoulated in future release)
 - `weather_date_id`, `temperature`, `month`, `year`
+
+| Field Name | Datatype | Field Length / Precision | Constraint | Description |
+| --------------- | --------------- | --------------- | -------- | --------- |
+| weather_date_id | INT4 | 10 / 10 | NOT NULL | This is the unique ID for each of the rows in the table |
+| temperature | FLOAT8 | 10 / 10 | NOT NULL | This is the temperature in CELCIUS degrees |
+| month | VARCHAR | 10 / 10 | NOT NULL | This is the month for temperature degrees |
+| year | INT4 | 10 / 10 | NOT NULL | This is the year for temperature degrees |
 
 `Dim_Time`: This is a dimesion table that has timestamps of power usage broken down into specific units
 - `date`, `datetime`, `week`, `hour`, `year`, `day of week`, `month`
