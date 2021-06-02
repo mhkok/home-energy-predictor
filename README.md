@@ -19,7 +19,8 @@ As for languages  I have used a combination of SQL, Python and Pandas to be able
 ## Different scenarios
 - Data increased by 100x: Due to the scalable of the tools used above this should not be an issue for the Energy Predictor tool.
 - Pipelines each day at 7am: By implementing a DAG using Airflow its quite easy to run the ETL processes daily on 7am. 
-- Database accessed by 100+ users: The DWH Redshift database can handle up to 500 concurrent connections. Also, most likely when there are more users connected to the Redshift database the hardware specs of the Redshift database will need to be increased to handle the load. 
+- Database accessed by 100+ users: The DWH Redshift database can handle up to 500 concurrent connections. Also, most likely when there are more users connected to the Redshift database the hardware specs of the Redshift database will need to be increased to handle the load. If users don't need to perform INSERT or UPDATE it would also be possible to periodically copy the data to a NoSQL database like Cassandra. 
+
 ## Data types & files
 
 Currently two different data types are used in this projecct to process data: JSON & CSV. Find under the `/data` dir examples of these files. 
@@ -32,11 +33,21 @@ The following files are in this repo:
 - `etl.py`: This file processes the different data sources into the proper dimension & fact tables
 - `p1_data_p1.py`: This file is run every 5 mins on a Raspberry Pi connected to the Smartmeter. The python file reads the output of the data and translates this into a JSON file. Finally, the JSON is copied across into S3.
 - `terraform/*`: this directory contains all the IaC to provision Airflow & AWS Redshift. Make sure to have installed `terraform 0.13` to properly run this code. To provision infrastructure run the following commands: `terraform init`, `terraform plan` and `terraform apply`.
-## Schema for DWH
-In this section the schema's for the database are explained.
+
+## Schema and data modelfor DWH
+
+In this section the schema's for the database are explained. The data schema is based on a Star schema, using a physical model. Generally speaking a Star schema has several dimension tables and a fact table. The star schema consists of one or more fact tables referencing any number of dimension tables. The benefits are that the tables are denormalized, queries are simplified and aggregations will go faster. Drawbacks of the star schema model is decreased query flexbility and many to many relationships. This could negatively impact the performance of the database. 
 
 `Fact_Home_Electricity_Costs`: This is the fact table that shows the costs per month for your live electricity usage. This table has the following schema:
-- `elec_prices_date_id`, `costperkwh`, `month`, `year`
+- `elec_prices_date_id`, `electricity_costs_per_month	`, `month`, `year`
+| Field Name | Datatype | Field Length / Precision | Constraint | Description
+--- | --- | ---
+| elec_prices_date_id | INT IDENTITY | 10 / 10 | N/A | This is the field that uniquely identifies the value of the row
+| month | VARCHAR | 256 / 256 | N/A | This column shows the the month 
+| electricity_costs_per_month	 | FLOAT8 |17 / 17 | N/A | This is the calculation of the cost per month of electricity based on table `power_usage_home` & `Electricity prices`. 
+| power_usage_date_id | FLOAT8 | 19 / 19 | FOREIGN KEY to `power_usage_home` table
+| elec_prices_date_id | FLOAT8 | 19 / 19 | FOREIGN KEY to `electricity_prices` table 
+
 
 `Dim_Power_Usage`: This is a dimension table consisting of all electricity usage coming from your P1/Smartmeter data deployed on 
 Raspbery Pi. This table has the following schema:
