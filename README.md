@@ -50,11 +50,22 @@ In this section the schema's for the database are explained. The data schema is 
 | elec_prices_date_id | INT8 | 19 / 19 | N/A | FOREIGN KEY to `electricity_prices` table with primary key `elec_prices_date_id` |
 
 
-
-
 `Dim_Power_Usage`: This is a dimension table consisting of all electricity usage coming from your P1/Smartmeter data deployed on 
 Raspbery Pi. This table has the following schema:
 - `power_usage_date_id`, `current_power_usage`, `peak_hours`, `peak_hours_returned`, `off_peak_hours`, `off_peak_hours_returned`, `current_power_returned`
+
+| Field Name | Datatype | Field Length / Precision | Constraint | Description |
+| --------------- | --------------- | --------------- | -------- | --------- |
+| power_usage_date_id | INT8 | 19 / 19 | NOT NULL | This is the unique ID for each of the rows in the table |
+| datetime | TIMESTAMP | 29 / 29 | N/A | This is the timestamp of the measure power usage in the house | 
+| month | INT4 | 10 / 10 | N/A | This is the month of the power measurement in the house | 
+| year |  INT4 | 10 / 10 | N/A | This is the year of the power measurement in the house | 
+| current_power_usage | FLOAT8 | 17 / 17 | N/A | This is the current power usage in the house in kwh |
+| peak_hours | FLOAT8 | 17 / 17 | N/A | This is the current power usage during peak hours in kwh |
+| peak_hours_returned | FLOAT8 | 17 / 17 | N/A | This is current returned power to the elecricity supplier in kwh | 
+| off_peak_hours | FLOAT8 | 17 / 17 | N/A | This is the current power usage during off peak hours in kwh | 
+| off_peak_hours_returned | FLOAT8 | 17 / 17 | N/A | This is the returned power in off-peak hours to the electricity supplier in kwh | 
+| current_power_returned | FLOAT8 | 17 / 17 | N/A | This is the power returned to the electricity supplier of the time of records in kwh | 
 
 `Dim_Electricity_prices`: This is a dimension table that has the latest electricity prices available from the Dutch statistics bureau (CBS) with the following schema:
 - `elec_prices_date_id`, `costperkwh`, `month`, `year`
