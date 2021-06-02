@@ -41,8 +41,8 @@ In this section the schema's for the database are explained. The data schema is 
 `Fact_Home_Electricity_Costs`: This is the fact table that shows the costs per month for your live electricity usage. This table has the following schema:
 - `elec_prices_date_id`, `electricity_costs_per_month	`, `month`, `year`
 
-| Field Name | Datatype | Field Length / Precision | Constraint | Description |
-|--- | --- | --- |
+|Field Name |Datatype |Field Length / Precision |Constraint | Description|
+|--- | --- | ---|
 | elec_prices_date_id | INT IDENTITY | 10 / 10 | N/A | This is the field that uniquely identifies the value of the row |
 | month | VARCHAR | 256 / 256 | N/A | This column shows the the month |
 | electricity_costs_per_month	 | FLOAT8 |17 / 17 | N/A | This is the calculation of the cost per month of electricity based on table `power_usage_home` & `Electricity prices`. |
