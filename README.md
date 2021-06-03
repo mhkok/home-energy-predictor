@@ -21,11 +21,17 @@ As for languages  I have used a combination of SQL, Python and Pandas to be able
 - Pipelines each day at 7am: By implementing a DAG using Airflow its quite easy to run the ETL processes daily on 7am. 
 - Database accessed by 100+ users: The DWH Redshift database can handle up to 500 concurrent connections. Also, most likely when there are more users connected to the Redshift database the hardware specs of the Redshift database will need to be increased to handle the load. If users don't need to perform INSERT or UPDATE it would also be possible to periodically copy the data to a NoSQL database like Cassandra. 
 
-## Data types & files
+## Data, Data types & files
+This section describes the total amount of data, data types and files in the repository. 
+
+### Data
+In the `/data` dir in this repo you can find examples of the original data that's been used in this project. Please note that in the `S3:/p1-staging` bucket around ~1 million JSON files are stored related to power usage, coming from the P1 smartmeter connection. This data is partially artificial and partially live data, to adhere to the project requiremnts. 
+
+### Data types
 
 Currently two different data types are used in this projecct to process data: JSON & CSV. Find under the `/data` dir examples of these files. 
 - Electricity Costs data (CSV): This data is coming from the Dutch statistics bureau. This data is used to calculate how much the usage of electricity will cost based on kWh per month
-- Power usage costs (JSON): This data is coming directly from your (compatible) smart meter in your home using a P1 cable connected to a Raspberry Pi. This JSON is an example of how this looks like. Typically the following the data is tracked in the JSON:
+- Power usage (JSON): This data is coming directly from your (compatible) smart meter in your home using a P1 cable connected to a Raspberry Pi. This JSON is an example of how this looks like. Typically the following the data is tracked in the JSON:
 ```{"current_power_usage_kwh": 0.033, "gas_usage_m3": 631.549, "datetime": "31-05-2021-23-55", "peak_hours_kwh": 3083.134, "peak_hours_returned_kwh": 223.795, "off_peak_hours_kwh": 2491.676, "off_peak_hours_returned_kwh": 102.211, "current_power_returned_kwh": 0.0}```
 
 The following files are in this repo:
