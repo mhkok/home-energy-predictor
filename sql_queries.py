@@ -149,6 +149,21 @@ power_usage_home_insert = (
     """
 )
 
+time_insert = (
+    """
+    INSERT  INTO time (datetime, hour, day, week, month, year, weekday)
+    SELECT  DISTINCT to_timestamp(spu.datetime, 'DD-MM-YYYY-HH24-MI') AS datetime,
+            EXTRACT (HOUR FROM (to_timestamp(spu.datetime, 'DD-MM-YYYY-HH24-MI'))) as hour,
+            EXTRACT (DAY FROM (to_timestamp(spu.datetime, 'DD-MM-YYYY-HH24-MI'))) as day,
+            EXTRACT (WEEK FROM (to_timestamp(spu.datetime, 'DD-MM-YYYY-HH24-MI'))) as week,
+            EXTRACT (MONTH FROM (to_timestamp(spu.datetime, 'DD-MM-YYYY-HH24-MI'))) as month,
+            EXTRACT (YEAR FROM (to_timestamp(spu.datetime, 'DD-MM-YYYY-HH24-MI'))) as year,   
+            EXTRACT (WEEKDAY FROM (to_timestamp(spu.datetime, 'DD-MM-YYYY-HH24-MI'))) as weekday
+    FROM staging_power_usage spu
+    WHERE spu.datetime IS NOT NULL
+    """
+)
+
 electricity_prices_insert = (
     """
     INSERT INTO electricity_prices (elec_prices_date_id, costperkwh, month, year)
@@ -178,4 +193,4 @@ home_electricity_costs_table_insert = (
 create_table_queries = [staging_power_usage_create, staging_electricity_prices, power_usage_home_create, weather_table_create, electricity_prices_create, time_table_create, home_electricity_costs]
 drop_table_queries = [power_usage_home_drop, time_table_drop, weather_table_drop, electricity_prices_drop, home_electricity_costs_drop, staging_power_usage_drop, staging_electricity_prices_drop, time_table_drop]
 copy_table_queries = [staging_power_usage_copy]
-insert_table_queries = [electricity_prices_insert, home_electricity_costs_table_insert]
+insert_table_queries = [electricity_prices_insert, power_usage_home_insert, time_insert, home_electricity_costs_table_insert]
