@@ -38,7 +38,7 @@ The following files are in this repo:
 
 In this section the schema's for the database are explained. The data schema is based on a Star schema, using a physical model. Generally speaking a Star schema has several dimension tables and a fact table. The star schema consists of one or more fact tables referencing any number of dimension tables. The benefits are that the tables are denormalized, queries are simplified and aggregations will go faster. Drawbacks of the star schema model is decreased query flexbility and many to many relationships. This could negatively impact the performance of the database. 
 
-## Star schema vs Snowflake schema
+### Star schema vs Snowflake schema
 I have chose the star schema built on top of Redshift DWH to ensure maintainability and scalability. The type of data used fits nicely for this purpose. The data can be sliced into dimesion tables (eg power usage, electricity prices) and one fact table to view the costs of electricity. 
 A snowflake schema is used when you have multiple levels of relationships and child tables have multiple parents. This is not the case for the type of data used in this project, hence the reason I have used a star schema.
 
