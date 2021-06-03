@@ -158,8 +158,10 @@ def process_p1_output(stack):
 
     # Debug
     #print (stack, "\n")
-    
-    data = [dt_string, off_peak_hours_usage, peak_hours_usage, off_peak_hours_returned, peak_hours_returned, current_power_usage, current_power_returned, gas_usage]
+    now = datetime.datetime.now()
+    dt_now = now.strftime("%d-%m-%Y-%H-%M")
+
+    data = [dt_now, off_peak_hours_usage, peak_hours_usage, off_peak_hours_returned, peak_hours_returned, current_power_usage, current_power_returned, gas_usage]
     data_key = ["datetime", "off_peak_hours_kwh", "peak_hours_kwh", "off_peak_hours_returned_kwh", "peak_hours_returned_kwh", "current_power_usage_kwh", "current_power_returned_kwh", "gas_usage_m3"]
     
     usage_dict = dict(zip(data_key, data))
