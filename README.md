@@ -9,19 +9,19 @@ The architecture of the Home Energy Predictor consists of a myriad of technologi
 
 ![Architecture Home Energy Predictor](./architecture.png)
 
-## Choice of technology
+## Choice of Technology
 For data storage I have chosen to use S3 since this is extremely scalable, cheap and quite easy to integrate with a myriad of cloud native technologies out there. 
 
 As for database technology I have chose to use AWS Redshift since this is heavily based on SQL technology, which is again highly scalable and is commonly used by many. This allows for easy transfer of knowledge and is easy understandable by other colleagues in the data engineering world.
 
 As for languages  I have used a combination of SQL, Python and Pandas to be able to extract, transfer and load the data into the Redshift DWH. These are all languages and tools heavily used by the community and are easy understandable. Hence, my decision to use these tools. 
 
-## Different scenarios
+## Different Scenarios
 - Data increased by 100x: Due to the scalable of the tools used above this should not be an issue for the Energy Predictor tool.
 - Pipelines each day at 7am: By implementing a DAG using Airflow its quite easy to run the ETL processes daily on 7am. 
 - Database accessed by 100+ users: The DWH Redshift database can handle up to 500 concurrent connections. Also, most likely when there are more users connected to the Redshift database the hardware specs of the Redshift database will need to be increased to handle the load. If users don't need to perform INSERT or UPDATE it would also be possible to periodically copy the data to a NoSQL database like Cassandra. 
 
-## Data, Data types & files
+## Data, Data types & Files
 This section describes the total amount of data, data types and files in the repository. 
 
 ### Data
@@ -44,7 +44,7 @@ The following files are in this repo:
 
 In this section the schema's for the database are explained. The data schema is based on a Star schema, using a physical model. Generally speaking a Star schema has several dimension tables and a fact table. The star schema consists of one or more fact tables referencing any number of dimension tables. The benefits are that the tables are denormalized, queries are simplified and aggregations will go faster. Drawbacks of the star schema model is decreased query flexbility and many to many relationships. This could negatively impact the performance of the database. 
 
-### Star schema vs Snowflake schema
+### Star Schema vs Snowflake Schema
 I have chose the star schema built on top of Redshift DWH to ensure maintainability and scalability. The type of data used fits nicely for this purpose. The data can be sliced into dimesion tables (eg power usage, electricity prices) and one fact table to view the costs of electricity. 
 A snowflake schema is used when you have multiple levels of relationships and child tables have multiple parents. This is not the case for the type of data used in this project, hence the reason I have used a star schema.
 
