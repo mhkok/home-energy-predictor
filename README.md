@@ -118,7 +118,8 @@ Raspbery Pi. This table has the following schema:
 ![Schema for DWH](./schema.png)
 
 ## Results
-As part of this project the goal is to calculate the costs of the power usage in your house. Using data from the Dutch statistics bureau as shown in the data dir we can calculate these costs, also we can have a look at historic costs for the last couple of years. For example if we looks specifical to data for 2021, you can see clearly that total costs of electricity usage is going up during wintertime while the cost per kwh stays about the same price (~0.07 EUR cents). Below you can find a snippet of the data populated in the electricity costs table. 
+As part of this project the goal is to calculate the costs of the power usage in your house. Using data from the Dutch statistics bureau as shown in the data dir we can calculate these costs. For example if we look specifically to the data for 2021, you can see clearly that total costs of electricity usage is going up during wintertime while the cost per kwh stays about the same price (~0.07 EUR cents). Below you can find a snippet of the data populated in the electricity costs table. The main reason for the electricity costs to go up is because the total daylight in AMS in January is 7.5 hours whilst in May its 15 hours.
+Also interesting to see that the costs per kwh in April was relatively higher than the other months in 2021. Its unclear why the cost per kwh was higher that month- it might due to weather conditions, but also gas prices could influence this. 
 
 | Month | Year | electricity_costs_per_month |
 | ------| ---- | ----------------------------|
