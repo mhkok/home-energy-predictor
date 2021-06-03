@@ -116,3 +116,14 @@ Raspbery Pi. This table has the following schema:
 
 ### Data model for DWH
 ![Schema for DWH](./schema.png)
+
+## Results
+As part of this project the goal is to calculate the costs of the power usage in your house. Using data from the Dutch statistics bureau as shown in the data dir we can calculate these costs, also we can have a look at historic costs for the last couple of years. For example if we looks specifical to data for 2021, you can see clearly that total costs of electricity is going up during wintertime.
+
+| Month | Year | electricity_costs_per_month |
+| ------| ---- | ----------------------------|
+| 1  | 2021 | 14.9158 |
+| 2  | 2021 | 14.4795 |
+| 3 | 2021 | 14.98 |
+| 4 | 2021 | 15.59 |
+| 5 | 2021 | 11.88 |
