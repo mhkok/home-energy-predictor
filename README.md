@@ -18,8 +18,8 @@ As for languages  I have used a combination of SQL, Python and Pandas to be able
 
 ## Different Scenarios
 - Data increased by 100x: Due to the scalability of the architecture shown above this should not be an issue for the Energy Predictor tool. If performance does decrease a few options are available in Redshift to improve query performance:
-* Distribution Style tweaks: EVEN for fact tables/dimension tables, ALL, AUTO
-* Sorting Key: define its columns as sort key. Upon loading rows are sorted before distibution slices. This minimizes the query time since each node already has contiguous ranges of rows based on the sorting key. This is useful for columns that are used frequently in sorting like the data dimension and its corresponding FOREIGN key in the fact table.
+  * Distribution Style tweaks: EVEN for fact tables/dimension tables, ALL, AUTO
+  * Sorting Key: define its columns as sort key. Upon loading rows are sorted before distibution slices. This minimizes the query time since each node already has contiguous ranges of rows based on the sorting key. This is useful for columns that are used frequently in sorting like the data dimension and its corresponding FOREIGN key in the fact table.
 - Pipelines each day at 7am: By implementing a DAG using Airflow its quite easy to run the ETL processes daily on 7am. 
 - Database accessed by 100+ users: The DWH Redshift database can handle up to 500 concurrent connections. Also, most likely when there are more users connected to the Redshift database the hardware specs of the Redshift database will need to be increased to handle the load. If users don't need to perform INSERT or UPDATE it would also be possible to periodically copy the data to a NoSQL database like Cassandra. 
 
